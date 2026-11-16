@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Đờn ca tài tử Nam Bộ - 3D</title>
+  <title>Tiểu cảnh Đờn ca tài tử Nam Bộ - 3D</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #111;
+      background-color: #1a1a1a;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     iframe {
@@ -29,7 +29,7 @@
       z-index: 9999;
       background: rgba(20, 20, 20, 0.85);
       color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.35);
       padding: 10px 18px;
       border-radius: 30px;
       font-size: 14px;
@@ -46,76 +46,74 @@
       background: rgba(255, 255, 255, 0.95);
       color: #000;
     }
-    .audio-btn.pulse {
-      animation: pulse-border 1.5s infinite;
-      border-color: #f5b041;
-    }
-    @keyframes pulse-border {
-      0% { box-shadow: 0 0 0 0 rgba(245, 176, 65, 0.7); }
-      70% { box-shadow: 0 0 0 10px rgba(245, 176, 65, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(245, 176, 65, 0); }
-    }
   </style>
 </head>
 <body>
 
-  <!-- Khung 3D tràn 100% màn hình -->
+  <!-- Khung 3D Sketchfab tràn 100% màn hình -->
   <iframe 
-    title="Tiểu cảnh Đờn ca tài tử Nam Bộ"
-    src="https://sketchfab.com"
+    title="nha" 
+    frameborder="0" 
+    allowfullscreen 
+    mozallowfullscreen="true" 
+    webkitallowfullscreen="true" 
     allow="autoplay; fullscreen; xr-spatial-tracking" 
-    allowfullscreen>
+    xr-spatial-tracking 
+    execution-while-out-of-viewport 
+    execution-while-not-rendered 
+    web-share 
+    src="https://sketchfab.com">
   </iframe>
 
-  <!-- File âm thanh mô tả (bỏ loop để phát hết bài thuyết minh thì dừng, hoặc thêm chữ loop nếu muốn lặp lại) -->
+  <!-- File âm thanh mô tả (đảm bảo file tên mota.mp3 nằm cùng thư mục) -->
   <audio id="voice-desc" autoplay preload="auto">
     <source src="mota.mp3" type="audio/mpeg">
   </audio>
 
   <button class="audio-btn" id="toggle-btn" onclick="toggleAudio()">
-    🔊 Nghe thuyết minh mô hình
+    ⏸️ Tạm dừng thuyết minh
   </button>
 
   <script>
     const audio = document.getElementById('voice-desc');
     const btn = document.getElementById('toggle-btn');
 
-    function updateUI(playing) {
-      if (playing) {
-        btn.innerHTML = '⏸️ Tạm dừng thuyết minh';
-        btn.classList.remove('pulse');
-      } else {
-        btn.innerHTML = '🔊 Nghe thuyết minh mô hình';
-        btn.classList.add('pulse');
+    function updateUI(isPlaying) {
+      btn.innerHTML = isPlaying ? '⏸️ Tạm dừng thuyết minh' : '▶️ Nghe thuyết minh';
+    }
+
+    // Tự động phát ngay khi tải trang
+    function startAutoPlay() {
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          updateUI(true);
+        }).catch(() => {
+          // Nếu trình duyệt chặn tự động phát tiếng, tự động kích hoạt ngay khi khán giả chạm/vuốt/bấm bất kỳ đâu
+          updateUI(false);
+          const unlock = () => {
+            audio.play().then(() => {
+              updateUI(true);
+              ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => 
+                document.removeEventListener(evt, unlock)
+              );
+            });
+          };
+          ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => 
+            document.addEventListener(evt, unlock, { once: true })
+          );
+        });
       }
     }
 
-    // Cố gắng tự động phát ngay khi tải trang
-    window.addEventListener('DOMContentLoaded', () => {
-      audio.play().then(() => {
-        updateUI(true);
-      }).catch(() => {
-        // Nếu trình duyệt chặn tự động phát, nút sẽ nhấp nháy nhẹ và tự phát ngay khi người dùng chạm vào màn hình
-        updateUI(false);
-        const unlockAudio = () => {
-          audio.play().then(() => {
-            updateUI(true);
-            document.removeEventListener('pointerdown', unlockAudio);
-            document.removeEventListener('keydown', unlockAudio);
-          });
-        };
-        document.addEventListener('pointerdown', unlockAudio);
-        document.addEventListener('keydown', unlockAudio);
-      });
-    });
+    window.addEventListener('load', startAutoPlay);
 
-    // Tự động đổi lại chữ khi đọc hết bài thuyết minh
+    // Đổi nút khi phát xong
     audio.addEventListener('ended', () => {
-      updateUI(false);
       btn.innerHTML = '🔄 Nghe lại thuyết minh';
     });
 
-    // Nút bấm chủ động Bật/Tắt cho khán giả
+    // Nút bấm Pause / Play chủ động
     function toggleAudio() {
       if (audio.paused) {
         audio.play();
