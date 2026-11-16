@@ -3,34 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Tiểu cảnh Đờn ca tài tử Nam Bộ - 3D</title>
+  <title>Đờn ca tài tử Nam Bộ - 3D</title>
+  <script type="module" src="https://googleapis.com"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
       width: 100vw;
       height: 100vh;
       overflow: hidden;
-      background-color: #1a1a1a;
+      background: radial-gradient(circle at center, #2b303a 0%, #111317 100%);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
-    iframe {
-      position: fixed;
-      top: 0;
-      left: 0;
+    model-viewer {
       width: 100vw;
       height: 100vh;
-      border: none;
-      z-index: 1;
+      --poster-color: transparent;
     }
     .audio-btn {
       position: fixed;
-      bottom: 55px;
+      bottom: 25px;
       left: 20px;
       z-index: 9999;
       background: rgba(20, 20, 20, 0.85);
       color: #fff;
       border: 1px solid rgba(255, 255, 255, 0.35);
-      padding: 10px 18px;
+      padding: 12px 20px;
       border-radius: 30px;
       font-size: 14px;
       font-weight: 500;
@@ -43,30 +40,25 @@
       transition: all 0.2s ease;
     }
     .audio-btn:hover {
-      background: rgba(255, 255, 255, 0.95);
+      background: #f5b041;
       color: #000;
+      border-color: #f5b041;
     }
   </style>
 </head>
 <body>
 
-  <!-- Khung 3D Sketchfab đã tối ưu chống chặn tường lửa -->
-  <iframe 
-    title="nha" 
-    referrerpolicy="no-referrer"
-    src="https://sketchfab.com"
-    frameborder="0" 
-    allow="autoplay; fullscreen; xr-spatial-tracking" 
-    allowfullscreen 
-    mozallowfullscreen="true" 
-    webkitallowfullscreen="true" 
-    xr-spatial-tracking 
-    execution-while-out-of-viewport 
-    execution-while-not-rendered 
-    web-share>
-  </iframe>
+  <model-viewer 
+    src="model.glb" 
+    alt="Tiểu cảnh Đờn ca tài tử Nam Bộ"
+    camera-controls 
+    auto-rotate 
+    auto-rotate-delay="3000"
+    shadow-intensity="1" 
+    exposure="1.0"
+    touch-action="pan-y">
+  </model-viewer>
 
-  <!-- File âm thanh mô tả mô hình -->
   <audio id="voice-desc" autoplay preload="auto">
     <source src="mota.mp3" type="audio/mpeg">
   </audio>
