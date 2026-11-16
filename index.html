@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Đờn ca tài tử Nam Bộ - 3D</title>
+  <title>Tiểu cảnh Đờn ca tài tử Nam Bộ - 3D</title>
   <script type="module" src="https://googleapis.com"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,6 +18,19 @@
       width: 100vw;
       height: 100vh;
       --poster-color: transparent;
+    }
+    .loading-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      text-align: center;
+      pointer-events: none;
     }
     .audio-btn {
       position: fixed;
@@ -37,19 +50,15 @@
       align-items: center;
       gap: 8px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      transition: all 0.2s ease;
-    }
-    .audio-btn:hover {
-      background: #f5b041;
-      color: #000;
-      border-color: #f5b041;
     }
   </style>
 </head>
 <body>
 
   <model-viewer 
+    id="viewer"
     src="model.glb" 
+    draco-decoder-path="https://gstatic.com"
     alt="Tiểu cảnh Đờn ca tài tử Nam Bộ"
     camera-controls 
     auto-rotate 
@@ -57,6 +66,9 @@
     shadow-intensity="1" 
     exposure="1.0"
     touch-action="pan-y">
+    <div class="loading-box" slot="poster" id="loading-text">
+      ⏳ Đang tải mô hình 3D (0%)...
+    </div>
   </model-viewer>
 
   <audio id="voice-desc" autoplay preload="auto">
@@ -68,8 +80,19 @@
   </button>
 
   <script>
+    const viewer = document.getElementById('viewer');
+    const loadingText = document.getElementById('loading-text');
     const audio = document.getElementById('voice-desc');
     const btn = document.getElementById('toggle-btn');
+
+    // Hiển thị phần trăm tải mô hình
+    viewer.addEventListener('progress', (event) => {
+      const percent = Math.round(event.detail.totalProgress * 100);
+      loadingText.innerText = `⏳ Đang tải mô hình 3D (${percent}%)...`;
+      if (percent === 100) {
+        loadingText.innerText = '⚙️ Đang dựng hình ảnh 3D...';
+      }
+    });
 
     function updateUI(isPlaying) {
       btn.innerHTML = isPlaying ? '⏸️ Tạm dừng thuyết minh' : '▶️ Nghe thuyết minh';
